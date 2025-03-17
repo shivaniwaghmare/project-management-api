@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAttributeRequest;
 use App\Models\Attribute;
+use Illuminate\Http\Request;
 
 class AttributeController extends Controller
 {
@@ -12,13 +14,8 @@ class AttributeController extends Controller
         return Attribute::all();
     }
 
-    public function store(Request $request)
+    public function store(StoreAttributeRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|unique:attributes,name',
-            'type' => 'required|in:text,date,number,select'
-        ]);
-
-        return Attribute::create($request->all());
+        return Attribute::create($request->validated());
     }
 }

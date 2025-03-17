@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\ProjectRequest;
+use App\Models\Project;
+use App\Models\Attribute;
 
 class ProjectController extends Controller
 {
-    public function index(Request $request)
+    public function index(ProjectRequest $request)
     {
         $query = Project::query();
 
-        // Handle standard field filters (e.g., project name, status)
+        // Handle standard field filters
         if ($request->has('filters')) {
             foreach ($request->get('filters') as $field => $value) {
-                // Check if value is an array (for operators)
                 if (is_array($value)) {
                     foreach ($value as $operator => $val) {
                         if (in_array($operator, ['=', '>', '<', '>=', '<=', 'LIKE'])) {
@@ -21,7 +22,6 @@ class ProjectController extends Controller
                         }
                     }
                 } else {
-                    // Default operator is '='
                     $query->where($field, '=', $value);
                 }
             }
@@ -54,25 +54,20 @@ class ProjectController extends Controller
 
         return response()->json($projects);
     }
-    
+
     public function show($id)
     {
         return Project::with('attributes.attribute')->findOrFail($id);
     }
 
-    public function store(Request $request)
+    public function store(ProjectRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'status' => 'required|in:active,inactive,completed'
-        ]);
-
         $project = Project::create($request->all());
 
         return response()->json($project, 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(ProjectRequest $request, $id)
     {
         $project = Project::findOrFail($id);
         $project->update($request->all());

@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreProjectAttributeRequest;
+use App\Models\AttributeValue;
+use App\Models\Project;
 use Illuminate\Http\Request;
 
 class ProjectAttributeController extends Controller
 {
-    public function store(Request $request, $projectId)
+    public function store(StoreProjectAttributeRequest $request, $projectId)
     {
-        $request->validate([
-            'attributes' => 'required|array',
-            'attributes.*.id' => 'exists:attributes,id',
-            'attributes.*.value' => 'required'
-        ]);
-
         $project = Project::findOrFail($projectId);
 
         foreach ($request->attributes as $attribute) {
